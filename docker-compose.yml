@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  app:
+    container_name: product_card
+    build: .
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.product-card.rule=Host(`productcard.mytestingenlocal.ml`)"
+      - "traefik.http.routers.product-card.rule=web-secured"
+      - "traefik.http.routers.product-card.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.product-card.loadbalance.server.port=3001"
+      # no https
+      - "traefik.http.routers.product-card-http.rule=Host(`productcard.mytestingenlocal.ml`)"
+      - "traefik.http.routers.product-card-http.entrypoints=web"
+      - "traefik.http.routers.product-card-http.middlewares=redirect@file"
+
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
